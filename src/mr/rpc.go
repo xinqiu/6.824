@@ -23,6 +23,35 @@ type ExampleReply struct {
 }
 
 // Add your RPC definitions here.
+type RegArgs struct {
+}
+
+type RegReply struct {
+	WorkerId int
+}
+
+type ReqTaskArgs struct {
+	WorkerId	int
+}
+
+type ReqTaskReply struct {
+	Task	*Task
+}
+
+type TaskArgs struct {
+	WorkerId	int
+}
+
+type ReportTaskArgs struct {
+	Done 		bool
+	TaskId		int
+	Phase 		TaskPhase
+	WorkerId	int
+}
+
+type ReportTaskReply struct {
+
+}
 
 
 // Cook up a unique-ish UNIX-domain socket name
