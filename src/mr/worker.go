@@ -51,7 +51,7 @@ func (w *worker) run() {
 	for {
 		t := w.reqTask()
 		if !t.Alive {
-			fmt.Println("worker get task not alive, worker %d exit..", w.id)
+			display(fmt.Sprintf("worker get task not alive, worker %d exit..\n", w.id))
 			return
 		}
 		w.doTask(t)

@@ -105,6 +105,8 @@ func (m *Master) schedule() {
 			flag = false
 			m.checkBreak(id)
 		case TaskStatusFinished:
+		//	只有全部任务都是完成，才不会对flag变量进行修改，
+		//	进入reduce环节
 		case TaskStatusErr:
 			flag = false
 			m.addTask(id)
@@ -166,6 +168,7 @@ func (m *Master) RegTask(args *TaskArgs, task *Task) {
 
 // Request a task
 func (m *Master) ReqTask(args *TaskArgs, reply *ReqTaskReply) error {
+	// 从task池中取一个给work进行工作
 	task := <-m.taskCh
 	reply.Task = &task
 	display("request task...")
@@ -177,6 +180,7 @@ func (m *Master) ReqTask(args *TaskArgs, reply *ReqTaskReply) error {
 	return nil
 }
 
+// 更新task状态
 func (m *Master) ReportTask(args *ReportTaskArgs, reply *ReportTaskReply) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -187,6 +191,8 @@ func (m *Master) ReportTask(args *ReportTaskArgs, reply *ReportTaskReply) error 
 		m.taskStats[args.TaskId].Status = TaskStatusErr
 	}
 
+	// 完成task需要刷新所有任务状态，并进行调度
+	// 但是此处不强制调度，也能过测试用例
 	go m.schedule()
 
 	return nil
@@ -198,6 +204,7 @@ func (m *Master) checkBreak(taskId int) {
 	}
 }
 
+// 通过chan把task塞进消息队列
 func (m *Master) addTask(taskId int)  {
 	m.taskStats[taskId].Status = TaskStatusQueue
 	task := Task{
