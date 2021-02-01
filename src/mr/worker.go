@@ -159,6 +159,7 @@ func (w *worker) doReduceTask(task Task) {
 			}
 			maps[kv.Key] = append(maps[kv.Key], kv.Value)
 		}
+		f.Close()
 	}
 
 	output := make([]string, 0)
